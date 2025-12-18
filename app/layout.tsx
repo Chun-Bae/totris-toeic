@@ -22,10 +22,10 @@ const baseUrl =
 export const metadata: Metadata = {
   metadataBase: baseUrl,
   title: "Totris",
-  description: "Tetris with TOEIC",
+  description: "테트리스 하면서 토익 단어 외우는 게임, Totris",
   openGraph: {
     title: "Totris",
-    description: "Tetris with TOEIC",
+    description: "테트리스 하면서 토익 단어 외우는 게임, Totris",
     url: baseUrl,
     siteName: "Totris",
     locale: "ko_KR",
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Totris",
-    description: "Tetris with TOEIC",
+    description: "테트리스 하면서 토익 단어 외우는 게임, Totris",
     images: [new URL("/og.png", baseUrl)],
   },
 };
