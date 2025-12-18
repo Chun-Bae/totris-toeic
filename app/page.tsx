@@ -218,6 +218,7 @@ export default function Home() {
   } | null>(null);
 
   const repeatTimerRef = useRef<number | null>(null);
+  const toastTimerRef = useRef<number | null>(null);
 
   const boardRef = useRef<Board>(makeEmptyBoard());
 
@@ -251,6 +252,26 @@ export default function Home() {
     repeatTimerRef.current = window.setInterval(fn, 70);
   };
 
+  const clearToastTimer = () => {
+    if (toastTimerRef.current != null) {
+      window.clearTimeout(toastTimerRef.current);
+      toastTimerRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    if (!vocabPopup) return;
+    clearToastTimer();
+    toastTimerRef.current = window.setTimeout(() => {
+      setVocabPopup(null);
+      toastTimerRef.current = null;
+    }, 2600);
+
+    return () => {
+      clearToastTimer();
+    };
+  }, [vocabPopup]);
+
   useEffect(() => {
     const detect = () => {
       const touch =
@@ -274,6 +295,7 @@ export default function Home() {
   useEffect(() => {
     return () => {
       stopRepeat();
+      clearToastTimer();
     };
   }, []);
 
@@ -573,7 +595,7 @@ export default function Home() {
       else if (e.key === "ArrowUp") tryRotate();
       else if (e.key === " ") hardDrop();
       else if (e.key === "c" || e.key === "C" || e.key === "Shift") hold();
-      else if (e.key.toLowerCase() === "r") restart();
+      else if (e.key.toLowerCase() === "r"  || e.key.toLowerCase() === "R" ||  e.key.toLowerCase() === "ㄱ") restart();
     };
 
     window.addEventListener("keydown", onKeyDown);
@@ -588,6 +610,37 @@ export default function Home() {
 
   return (
     <main className="min-h-screen flex items-center justify-center p-4 md:p-8">
+      {vocabPopup && (
+        <div className="fixed left-1/2 -translate-x-1/2 top-4 z-50 w-[92%] max-w-[520px]">
+          <div className="rounded-2xl border border-white/10 bg-black/60 text-white backdrop-blur px-4 py-3 shadow-xl">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="flex items-baseline gap-3">
+                  <div className="text-lg font-extrabold tracking-tight truncate">{vocabPopup.word}</div>
+                  {vocabPopup.pron && (
+                    <div className="text-xs opacity-70 truncate">{vocabPopup.pron}</div>
+                  )}
+                </div>
+                <div className="mt-1 text-sm opacity-90 break-words">{vocabPopup.meaning}</div>
+                {vocabPopup.example && (
+                  <div className="mt-2 text-xs opacity-70">{vocabPopup.example}</div>
+                )}
+              </div>
+
+              <button
+                className="shrink-0 rounded-lg border border-white/10 bg-black/30 px-2 py-1 text-xs text-white/90 opacity-80 hover:opacity-100"
+                onClick={() => setVocabPopup(null)}
+              >
+                닫기
+              </button>
+            </div>
+
+            <div className="mt-2 text-[11px] opacity-60">
+              라인을 지우면 단어가 잠깐 표시됩니다.
+            </div>
+          </div>
+        </div>
+      )}
       <div className="flex flex-col items-center gap-4 w-full max-w-[760px]">
         <div className="flex items-end justify-between w-full">
           <div>
@@ -693,29 +746,6 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="w-full rounded-xl border border-white/10 bg-black/30 backdrop-blur px-4 py-3">
-          <div className="flex items-center justify-between gap-3">
-            <div className="text-sm font-semibold">TOEIC 단어</div>
-            <div className="text-xs opacity-60">라인을 지우면 갱신됩니다</div>
-          </div>
-
-          {vocabPopup ? (
-            <div className="mt-2">
-              <div className="flex items-baseline justify-between gap-3">
-                <div className="text-xl font-bold tracking-tight">{vocabPopup.word}</div>
-                {vocabPopup.pron && (
-                  <div className="text-xs opacity-70">{vocabPopup.pron}</div>
-                )}
-              </div>
-              <div className="text-sm mt-1 opacity-90">{vocabPopup.meaning}</div>
-              {vocabPopup.example && (
-                <div className="text-xs mt-2 opacity-70">{vocabPopup.example}</div>
-              )}
-            </div>
-          ) : (
-            <div className="mt-2 text-sm opacity-70">아직 표시된 단어가 없습니다.</div>
-          )}
-        </div>
       </div>
     </main>
   );
