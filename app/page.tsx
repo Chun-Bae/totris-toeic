@@ -711,6 +711,7 @@ export default function Home() {
       stopKeyRepeat();
     };
 
+    
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("keyup", onKeyUp);
     window.addEventListener("blur", onBlur);
